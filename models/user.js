@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-       email: {
+    email: {
         type: String,
         required: true,
         unique: true
@@ -15,7 +15,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
- 
+    recentlyPlayed: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Track' 
+        }
+    ],
     createdAt: {
         type: Date,
         default: Date.now

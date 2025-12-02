@@ -58,7 +58,7 @@ router.post('/login', async (req, res, next) => {
                 message: 'Invalid credentials'
             });
         }
-        // ensure JWT secret is available
+        // ensure JWT secret is availableßßß
         if (!JWT_SECRET_KEY) {
             console.error('JWT_SECRET_KEY is not set. Set it in your environment or .env file.');
             return res.status(500).json({ success: false, message: 'Server misconfiguration' });
