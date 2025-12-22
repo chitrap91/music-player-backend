@@ -16,16 +16,16 @@ const playListRouter = require('./routes/playList');
 
 const result = dotenv.config();
 if (result.error) {
-    throw result.error;
+  throw result.error;
 }
 
-mongoose.connect(process.env.DB,{
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+mongoose.connect(process.env.DB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 }).then(() => {
-    console.log('Connected to MongoDB');
+  console.log('Connected to MongoDB');
 }).catch((err) => {
-    console.error('Error connecting to MongoDB', err);
+  console.error('Error connecting to MongoDB', err);
 
 })
 
@@ -34,7 +34,22 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-app.use(cors("http://localhost:5174/"))
+
+// app.use(cors({
+//   origin: "http://localhost:5173",
+//   methods: ["GET", "POST", "PUT", "DELETE"],
+//   allowedHeaders: "Content-Type, Authorization",
+//   exposedHeaders: ["Content-Disposition"]
+// }));
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
+}));
+
+app.options("*", cors());
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -48,12 +63,13 @@ app.use('/track', trackRouter);
 app.use('/playlist', playListRouter);
 
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   next(createError(404));
 });
 
+
 // error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};

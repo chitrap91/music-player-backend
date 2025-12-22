@@ -1,47 +1,67 @@
 const mongoose = require('mongoose');
-const trackShema = new mongoose.Schema({
-    title:{
+
+const trackSchema = new mongoose.Schema({
+
+    title: {
         type: String,
-        required:true,
+        required: true,
+        trim: true
     },
 
-    artist:{
-        type:String,
-        required:true
-
-
-    },
-    album:{
-        type:String,
-        required:true,
-    },
-    duration:{
-        type:Number,
-        required:true,
-    
+    artist: {
+        type: String,
+        required: true,
+        trim: true
     },
 
-    url:{
-        type:String,
-        required:true,      
-    }  ,
-    coverUrl:{
-        type:String,
-        required:true,      
-
+    album: {
+        type: String,
+        required: true,
+        trim: true
     },
-    createdAt:{
-        type: Date,
-        default: Date.now 
-       }     
-});
 
+    duration: {
+        type: Number,
+        required: true
+    },
 
+    url: {
+        type: String,
+        required: true
+    },
 
+    filePath: {
+        type: String
+    },
 
+    coverUrl: {
+        type: String,
+        required: true
+    },
 
+    likes: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
 
+    comments: [{
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+        },
+        text: {
+            type: String,
+            required: true,
+            trim: true
+        },
+        createdAt: {
+            type: Date,
+            default: Date.now
+        }
+    }]
 
+}, { timestamps: true });   
 
-  const Track = mongoose.model('Track',trackShema);
-  module.exports = Track;
+const Track = mongoose.model('Track', trackSchema);
+module.exports = Track;

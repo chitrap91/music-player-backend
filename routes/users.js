@@ -50,12 +50,14 @@ router.get('/profile/:id', verifyToken, async (req, res, next) => {
 })
 
 
+
+
 router.get('/recent/:id', verifyToken, async (req, res) => {
   try {
     const { id } = req.params;
 
     // Only allow user to see their own recently played songs
-    if (req.userId !== id) {
+    if (String(req.userId) !== String(id)) {
       return res.status(403).json({ message: "Forbidden" });
     }
 
@@ -90,6 +92,18 @@ router.get('/:id', verifyToken, async (req, res, next) => {
     });
   }
 
+});
+
+router.get("/likes", verifyToken, async (req, res) => {
+  try {
+    const user = await User.findById(req.userId).select("likes");
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({ success: true, data: { likes: user.likes } });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching likes" });
+  }
 });
 
 
