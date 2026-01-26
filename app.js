@@ -15,9 +15,9 @@ const trackRouter = require('./routes/track');
 const playListRouter = require('./routes/playList');
 
 const result = dotenv.config();
-if (result.error) {
-  console.log('Error loading .env file', result.error);
-}
+// if (result.error) {
+//   console.log('Error loading .env file', result.error);
+// }
 
 mongoose.connect(process.env.DB, {
   useNewUrlParser: true,
