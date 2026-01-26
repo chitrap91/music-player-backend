@@ -16,7 +16,7 @@ const playListRouter = require('./routes/playList');
 
 const result = dotenv.config();
 if (result.error) {
-  throw result.error;
+  console.log('Error loading .env file', result.error);
 }
 
 mongoose.connect(process.env.DB, {
