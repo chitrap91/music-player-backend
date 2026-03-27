@@ -42,13 +42,23 @@ app.set('view engine', 'jade');
 //   exposedHeaders: ["Content-Disposition"]
 // }));
 
+const allowedOrigins = process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ["http://localhost:5173"];
+
 app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true,
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl) 
+    // or if the origin is in our whitelist
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Required if you use cookies/sessions
   allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
-app.options("*", cors());
+// app.options("*", cors());
 
 app.use(logger('dev'));
 app.use(express.json());
