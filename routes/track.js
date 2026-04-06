@@ -197,6 +197,24 @@ router.post('/recent', verifyToken, async (req, res) => {
     }
 });
 
+router.get('/liked', verifyToken, async (req, res) => {
+    try {
+        const tracks = await Track.find({ likes: req.userId });
+        res.json({
+            success: true,
+            data: {
+                likes: tracks.map(t => t._id.toString())
+            }
+        });
+    } catch (error) {
+        console.error("Error fetching liked tracks:", error);
+        res.status(500).json({
+            success: false,
+            message: "Error fetching liked tracks"
+        });
+    }
+});
+
 router.post("/:id/like", verifyToken, async (req, res) => {
     try {
         const userId = req.userId;

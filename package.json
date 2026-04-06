@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "debug": "nodemon --inspect=3000 index.js"
+    "debug": "nodemon --inspect=3000 ./bin/www"
   },
 
   "dependencies": {

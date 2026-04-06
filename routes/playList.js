@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const verifyToken = require('../middleware/authenticate');
 const PlayList = require('../models/playList');
+const mongoose = require('mongoose');
 
 // ---------------- CREATE PLAYLIST ----------------
 router.post('/', verifyToken, async (req, res) => {
@@ -132,6 +133,13 @@ router.post("/:id/add-track", verifyToken, async (req, res) => {
             });
         }
 
+        if (!mongoose.Types.ObjectId.isValid(trackId)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid trackId"
+            });
+        }
+
         const playList = await PlayList.findById(req.params.id);
 
         if (!playList) {
@@ -141,8 +149,22 @@ router.post("/:id/add-track", verifyToken, async (req, res) => {
             });
         }
 
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid playlist id"
+            });
+        }
+
+        if (playList.user.toString() !== req.userId) {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
         // Prevent duplicate track
-        if (playList.tracks.includes(trackId)) {
+        if (playList.tracks.some(t => t.toString() === trackId)) {
             return res.status(400).json({
                 success: false,
                 message: "Track already in playlist"
@@ -172,11 +194,7 @@ router.delete("/:id/remove-track", verifyToken, async (req, res) => {
     try {
         const { trackId } = req.body;
 
-        const playlist = await PlayList.findByIdAndUpdate(
-            req.params.id,
-            { $pull: { tracks: trackId } },
-            { new: true }
-        );
+        const playlist = await PlayList.findById(req.params.id);
 
         if (!playlist) {
             return res.status(404).json({
@@ -185,10 +203,23 @@ router.delete("/:id/remove-track", verifyToken, async (req, res) => {
             });
         }
 
+        if (playlist.user.toString() !== req.userId) {
+            return res.status(403).json({
+                success: false,
+                message: "Unauthorized"
+            });
+        }
+
+        const updatedPlaylist = await PlayList.findByIdAndUpdate(
+            req.params.id,
+            { $pull: { tracks: trackId } },
+            { new: true }
+        );
+
         res.json({
             success: true,
             message: "Track removed",
-            data: playlist
+            data: updatedPlaylist
         });
 
     } catch (error) {
